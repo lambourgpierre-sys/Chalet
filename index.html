@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Chalets">
+<title>Chalets Valmorel</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #000; --surface: #111; --surface2: #1c1c1c;
+  --border: #2a2a2a; --text: #fff; --muted: #777; --accent: #4f6ef7;
+  --hdr: 52px; --leg: 36px;
+}
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); overscroll-behavior: none; -webkit-text-size-adjust: 100%; }
+header { position: fixed; top: 0; left: 0; right: 0; z-index: 300; height: var(--hdr); background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 12px; gap: 8px; }
+header h1 { font-size: 15px; font-weight: 700; flex: 1; color: var(--text); }
+.counter { font-size: 11px; color: var(--muted); background: var(--surface2); padding: 3px 8px; border-radius: 10px; }
+.btn-reset { background: none; border: 1px solid var(--border); color: var(--muted); font-size: 12px; padding: 5px 10px; border-radius: 6px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.btn-reset:active { background: var(--surface2); }
+.legend { position: fixed; top: var(--hdr); left: 0; right: 0; z-index: 290; height: var(--leg); background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; padding: 0 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.legend::-webkit-scrollbar { display: none; }
+.leg-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+.leg-dot { width: 7px; height: 7px; border-radius: 50%; }
+.scroll-body { margin-top: calc(var(--hdr) + var(--leg)); overflow-x: hidden; }
+table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+col.c-chalet { width: 18vw; }
+col.c-task { width: 20.5vw; }
+thead th { position: sticky; top: 0; z-index: 100; background: var(--surface2); border-bottom: 2px solid var(--border); padding: 7px 2px; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-align: center; overflow: hidden; white-space: nowrap; }
+thead th:first-child { text-align: left; padding-left: 8px; }
+tr.bloc-row td { background: var(--bg); padding: 8px 8px 3px; font-size: 9px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); border-bottom: none; }
+tbody tr { border-bottom: 1px solid var(--border); }
+tbody tr:not(.bloc-row):active { background: #181818; }
+.chalet-num { padding: 0 4px 0 8px; font-size: 12px; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+.task-cell { padding: 5px 2px; text-align: center; cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; }
+.pill { display: inline-flex; align-items: center; justify-content: center; width: 100%; max-width: 72px; height: 26px; border-radius: 13px; font-size: 10px; font-weight: 700; border: 1.5px dashed var(--border); color: var(--muted); background: transparent; white-space: nowrap; overflow: hidden; transition: transform 0.1s; }
+.pill.assigned { border-style: solid; border-color: transparent; color: #fff; }
+.task-cell:active .pill { transform: scale(0.93); }
+.pill[data-p="Ethan"] { background:#e05c5c; }
+.pill[data-p="Augustin"] { background:#e07a2f; }
+.pill[data-p="Stéphanie"] { background:#c9b84c; }
+.pill[data-p="Alexis"] { background:#4caf7a; }
+.pill[data-p="Hugo"] { background:#3db8d0; }
+.pill[data-p="Tristan"] { background:#5c7fe0; }
+.pill[data-p="Justine"] { background:#a55ce0; }
+.pill[data-p="Arthur"] { background:#e05ca0; }
+.overlay { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.7); align-items: flex-end; justify-content: center; }
+.overlay.open { display: flex; }
+.modal { background: var(--surface); border-radius: 20px 20px 0 0; border-top: 1px solid var(--border); width: 100%; max-width: 480px; padding: 14px 14px 36px; animation: up 0.22s ease; }
+@keyframes up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-bar { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 12px; }
+.modal-title { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 3px; }
+.modal-sub { font-size: 15px; font-weight: 600; text-align: center; margin-bottom: 16px; }
+.person-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 9px; }
+.person-btn { padding: 13px 8px; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; color: #fff; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.person-btn:active { opacity: 0.7; transform: scale(0.96); }
+.person-btn.sel { outline: 3px solid #fff; outline-offset: 2px; }
+.btn-clear { width: 100%; padding: 13px; border: 1.5px dashed var(--border); border-radius: 12px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; }
+.btn-clear:active { background: var(--surface2); }
+</style>
+</head>
+<body>
+<header>
+  <h1>● Valmorel</h1>
+  <span class="counter" id="counter">0 assignés</span>
+  <button class="btn-reset" id="btnReset">Réinitialiser</button>
+</header>
+<div class="legend" id="legend"></div>
+<div class="scroll-body">
+<table>
+  <colgroup>
+    <col class="c-chalet">
+    <col class="c-task"><col class="c-task"><col class="c-task"><col class="c-task">
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Chalet</th><th>☕ PDJ</th><th>🧹 Débarr.</th><th>🍾 Minibar</th><th>🍵 Teatime</th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+</div>
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-bar"></div>
+    <div class="modal-title" id="m-title"></div>
+    <div class="modal-sub" id="m-sub"></div>
+    <div class="person-grid" id="m-grid"></div>
+    <button class="btn-clear" id="m-clear">— Effacer —</button>
+  </div>
+</div>
+<script>
+const CHALETS=['01.01','01.02','01.03','01.04','02.01','02.02','02.03','02.04','03.01','03.02','03.03','03.04','04.01','04.02','04.03','04.04','05.01','05.02','05.03','06.01','06.02','06.03','06.04','07.01','07.02','07.03','10.01','10.02','10.03','10.04','11.01','11.02','11.03','12.01','12.02','12.03','12.04','13.01','13.02','13.03','13.04','13.05','14.01','14.02','14.03','14.04','14.05','15.01','15.02','16.01','16.02','16.03','16.04','17.01','17.02','17.03','17.04','17.05','17.06','17.07','18.01','18.02','18.03','18.04','19.01','19.02','19.03','19.04'];
+const TASKS=[{key:'pdj',label:'☕ PDJ'},{key:'debarr',label:'🧹 Débarrasser'},{key:'minibar',label:'🍾 Mini bar'},{key:'teatime',label:'🍵 Set up teatime'}];
+const PERSONS=[{name:'Ethan',short:'Ethan',color:'#e05c5c'},{name:'Augustin',short:'Aug.',color:'#e07a2f'},{name:'Stéphanie',short:'Stéph.',color:'#c9b84c'},{name:'Alexis',short:'Alexis',color:'#4caf7a'},{name:'Hugo',short:'Hugo',color:'#3db8d0'},{name:'Tristan',short:'Trist.',color:'#5c7fe0'},{name:'Justine',short:'Just.',color:'#a55ce0'},{name:'Arthur',short:'Arthur',color:'#e05ca0'}];
+const shortOf={};
+PERSONS.forEach(p=>shortOf[p.name]=p.short);
+let state={};
+try{const s=localStorage.getItem('valmorel2');if(s)state=JSON.parse(s);}catch(e){}
+function save(){try{localStorage.setItem('valmorel2',JSON.stringify(state));}catch(e){}}
+const legendEl=document.getElementById('legend');
+PERSONS.forEach(p=>{const d=document.createElement('div');d.className='leg-item';d.innerHTML=`<span class="leg-dot" style="background:${p.color}"></span>${p.name}`;legendEl.appendChild(d);});
+function getBloc(c){return c.split('.')[0];}
+function buildTable(){
+  const tbody=document.getElementById('tbody');tbody.innerHTML='';let lastBloc=null;
+  CHALETS.forEach(chalet=>{
+    const bloc=getBloc(chalet);
+    if(bloc!==lastBloc){const tr=document.createElement('tr');tr.className='bloc-row';tr.innerHTML=`<td colspan="5">Bloc ${bloc}</td>`;tbody.appendChild(tr);lastBloc=bloc;}
+    const tr=document.createElement('tr');
+    let html=`<td class="chalet-num">${chalet}</td>`;
+    TASKS.forEach(task=>{const key=`${chalet}|${task.key}`;const person=state[key]||null;const short=person?shortOf[person]:'+';html+=`<td class="task-cell" data-key="${key}" data-chalet="${chalet}" data-task="${task.key}" data-label="${task.label}"><span class="pill${person?' assigned':''}" data-p="${person||''}">${short}</span></td>`;});
+    tr.innerHTML=html;tbody.appendChild(tr);
+  });
+  const n=Object.keys(state).length;document.getElementById('counter').textContent=`${n} assigné${n!==1?'s':''}`;
+}
+let currentKey=null;
+document.getElementById('tbody').addEventListener('click',function(e){
+  const cell=e.target.closest('.task-cell');if(!cell)return;
+  currentKey=cell.dataset.key;
+  document.getElementById('m-title').textContent='Assigner à';
+  document.getElementById('m-sub').textContent=`Chalet ${cell.dataset.chalet} — ${cell.dataset.label}`;
+  const grid=document.getElementById('m-grid');grid.innerHTML='';const current=state[currentKey];
+  PERSONS.forEach(p=>{const btn=document.createElement('button');btn.className='person-btn'+(current===p.name?' sel':'');btn.style.background=p.color;btn.textContent=p.name;btn.addEventListener('click',()=>assignPerson(p.name));grid.appendChild(btn);});
+  document.getElementById('overlay').classList.add('open');
+});
+document.getElementById('overlay').addEventListener('click',function(e){if(e.target===this)document.getElementById('overlay').classList.remove('open');});
+document.getElementById('m-clear').addEventListener('click',()=>assignPerson(null));
+function assignPerson(name){if(name===null)delete state[currentKey];else state[currentKey]=name;save();buildTable();document.getElementById('overlay').classList.remove('open');}
+document.getElementById('btnReset').addEventListener('click',function(){if(!confirm('Réinitialiser toutes les assignations ?'))return;state={};save();buildTable();});
+buildTable();
+</script>
+</body>
+</html>
