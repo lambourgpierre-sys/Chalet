@@ -12,25 +12,26 @@
 :root {
   --bg: #000; --surface: #111; --surface2: #1c1c1c;
   --border: #2a2a2a; --text: #fff; --muted: #777; --accent: #4f6ef7;
-  --hdr: 52px; --leg: 36px;
+  --hdr: 52px; --leg: 36px; --col: 32px;
+  --top: calc(var(--hdr) + var(--leg) + var(--col));
 }
 body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); overscroll-behavior: none; -webkit-text-size-adjust: 100%; }
-header { position: fixed; top: 0; left: 0; right: 0; z-index: 300; height: var(--hdr); background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 12px; gap: 8px; }
+header { position: fixed; top: 0; left: 0; right: 0; z-index: 400; height: var(--hdr); background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 12px; gap: 8px; }
 header h1 { font-size: 15px; font-weight: 700; flex: 1; color: var(--text); }
 .counter { font-size: 11px; color: var(--muted); background: var(--surface2); padding: 3px 8px; border-radius: 10px; }
 .btn-reset { background: none; border: 1px solid var(--border); color: var(--muted); font-size: 12px; padding: 5px 10px; border-radius: 6px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .btn-reset:active { background: var(--surface2); }
-.legend { position: fixed; top: var(--hdr); left: 0; right: 0; z-index: 290; height: var(--leg); background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; padding: 0 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.legend { position: fixed; top: var(--hdr); left: 0; right: 0; z-index: 390; height: var(--leg); background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; padding: 0 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .legend::-webkit-scrollbar { display: none; }
 .leg-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
 .leg-dot { width: 7px; height: 7px; border-radius: 50%; }
-.scroll-body { margin-top: calc(var(--hdr) + var(--leg)); .scroll-body { margin-top: calc(var(--hdr) + var(--leg)); }
- }
+.col-header { position: fixed; top: calc(var(--hdr) + var(--leg)); left: 0; right: 0; z-index: 380; height: var(--col); background: var(--surface2); border-bottom: 2px solid var(--border); display: grid; grid-template-columns: 18vw 20.5vw 20.5vw 20.5vw 20.5vw; align-items: center; }
+.col-header span { font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-align: center; overflow: hidden; white-space: nowrap; padding: 0 2px; }
+.col-header span:first-child { text-align: left; padding-left: 8px; }
+.scroll-body { margin-top: var(--top); }
 table { width: 100%; border-collapse: collapse; table-layout: fixed; }
 col.c-chalet { width: 18vw; }
 col.c-task { width: 20.5vw; }
-thead th { position: sticky; top: 0; z-index: 100; background: var(--surface2); border-bottom: 2px solid var(--border); padding: 7px 2px; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-align: center; overflow: hidden; white-space: nowrap; }
-thead th:first-child { text-align: left; padding-left: 8px; }
 tr.bloc-row td { background: var(--bg); padding: 8px 8px 3px; font-size: 9px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); border-bottom: none; }
 tbody tr { border-bottom: 1px solid var(--border); }
 tbody tr:not(.bloc-row):active { background: #181818; }
@@ -69,17 +70,19 @@ tbody tr:not(.bloc-row):active { background: #181818; }
   <button class="btn-reset" id="btnReset">Réinitialiser</button>
 </header>
 <div class="legend" id="legend"></div>
+<div class="col-header">
+  <span>Chalet</span>
+  <span>☕ PDJ</span>
+  <span>🧹 Débarr.</span>
+  <span>🍾 Minibar</span>
+  <span>🍵 Teatime</span>
+</div>
 <div class="scroll-body">
 <table>
   <colgroup>
     <col class="c-chalet">
     <col class="c-task"><col class="c-task"><col class="c-task"><col class="c-task">
   </colgroup>
-  <thead>
-    <tr>
-      <th>Chalet</th><th>☕ PDJ</th><th>🧹 Débarr.</th><th>🍾 Minibar</th><th>🍵 Teatime</th>
-    </tr>
-  </thead>
   <tbody id="tbody"></tbody>
 </table>
 </div>
