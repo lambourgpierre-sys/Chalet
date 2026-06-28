@@ -24,7 +24,8 @@ header h1 { font-size: 15px; font-weight: 700; flex: 1; color: var(--text); }
 .legend::-webkit-scrollbar { display: none; }
 .leg-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
 .leg-dot { width: 7px; height: 7px; border-radius: 50%; }
-.scroll-body { margin-top: calc(var(--hdr) + var(--leg)); overflow-x: hidden; }
+.scroll-body { margin-top: calc(var(--hdr) + var(--leg)); .scroll-body { margin-top: calc(var(--hdr) + var(--leg)); }
+ }
 table { width: 100%; border-collapse: collapse; table-layout: fixed; }
 col.c-chalet { width: 18vw; }
 col.c-task { width: 20.5vw; }
